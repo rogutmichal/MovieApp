@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MovieApp.WelcomePage"
+             Title="Witaj"
+             BackgroundColor="#1F2937">
+
+    <VerticalStackLayout Padding="25"
+                         Spacing="20"
+                         VerticalOptions="Center"
+                         HorizontalOptions="Center">
+
+        <ActivityIndicator x:Name="LoadingIndicator"
+                           IsVisible="False"
+                           IsRunning="False"
+                           Color="#3B82F6"
+                           HeightRequest="40"
+                           HorizontalOptions="Center"/>
+
+        <Label x:Name="LoadingLabel"
+               Text="Trwa ładowanie filmów..."
+               IsVisible="False"
+               FontAttributes="Italic"
+               TextColor="#D1D5DB"
+               HorizontalOptions="Center"/>
+    </VerticalStackLayout>
+</ContentPage>

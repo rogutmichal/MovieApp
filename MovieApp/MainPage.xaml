@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:MovieApp"
+             x:Class="MovieApp.MainPage"
+             Title="🎬 Lista Filmów"
+             BackgroundColor="#1F2937">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:PercentToWidthConverter x:Key="PercentToWidthConverter" MaxWidth="170"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*" Padding="15" RowSpacing="15">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="10">
+
+            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                <SearchBar x:Name="SearchBar"
+                   Placeholder="🔍 Enter a title"
+                   BackgroundColor="#374151"
+                   TextColor="White"
+                   PlaceholderColor="#9CA3AF"
+                   HeightRequest="45"
+                   WidthRequest="250"
+                   FontSize="16"
+                   SearchButtonPressed="OnSearchClicked"/>
+
+                <Button x:Name="ButtonRec"
+                Text="Recommendations for you"
+                BackgroundColor="#1D4ED8"
+                TextColor="White"
+                CornerRadius="8"
+                Padding="8,4"
+                FontSize="14"
+                WidthRequest="200"
+                Clicked="OnRecommendClicked"/>
+            </HorizontalStackLayout>
+
+            <ScrollView Orientation="Vertical"
+                        HorizontalScrollBarVisibility="Never"
+                        Margin="0,5,0,0">
+                <FlexLayout x:Name="GenreFilterLayout"
+                            Direction="Row"
+                            Wrap="Wrap"
+                            JustifyContent="Start"
+                            AlignItems="Start"
+                            AlignContent="Start">
+                </FlexLayout>
+            </ScrollView>
+
+            <HorizontalStackLayout Spacing="12"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center">
+                <Button x:Name="ButtonLeft"
+        Text="previous"
+        BackgroundColor="#2563A8"
+        TextColor="White"
+        CornerRadius="8"
+        Padding="8,4"
+        FontSize="14"
+        WidthRequest="100"
+        Clicked="OnPreviousPageClicked"/>
+
+                <Label x:Name="PageInfoLabel"
+                       Text="Page 1"
+                       FontSize="16"
+                       TextColor="White"
+                       VerticalOptions="Center"/>
+
+                <Button x:Name="ButtonRight"
+        Text="Next"
+        BackgroundColor="#2563A8"
+        TextColor="White"
+        CornerRadius="8"
+        Padding="8,4"
+        FontSize="14"
+        WidthRequest="100"
+        Clicked="OnNextPageClicked"/>
+
+            
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="0,10,0,0">
+
+                <Button x:Name="LoadReviewsButton"
+                        Text="Load Reviews"
+                        BackgroundColor="#2563A8"
+                        TextColor="White"
+                        CornerRadius="8"
+                        Padding="8,4"
+                        FontSize="14"
+                        WidthRequest="200"
+                        Clicked="OnLoadReviewsClicked"
+                        IsVisible="False"/>
+
+                <Button x:Name="AnalyzeReviewsButton"
+                        Text="Analyze reviews"
+                        BackgroundColor="#10B981"
+                        TextColor="White"
+                        CornerRadius="8"
+                        Padding="8,4"
+                        FontSize="14"
+                        WidthRequest="200"
+                        Clicked="OnAnalyzeReviewsClicked"
+                        IsVisible="False"/>
+            </HorizontalStackLayout>
+
+            <Button x:Name="BackToMoviesButton"
+                    Text="Back to movies"
+                    BackgroundColor="#6B7280"
+                    TextColor="White"
+                    CornerRadius="8"
+                    Padding="8,4"
+                    FontSize="14"
+                    IsVisible="False"
+                    HorizontalOptions="Center"
+                    Clicked="OnBackToMoviesClicked"/>
+
+        </VerticalStackLayout>
+
+        <CollectionView x:Name="MoviesCollectionView"
+                        Grid.Row="1"
+                        ItemsSource="{Binding FilteredMovies}"
+                        VerticalOptions="FillAndExpand"
+                        Margin="0,5,0,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame CornerRadius="16"
+                           BackgroundColor="#374151"
+                           BorderColor="#4B5563"
+                           Padding="12"
+                           Margin="0,8"
+                           HasShadow="True"
+                           BindingContextChanged="OnFrameBindingContextChanged">
+
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image Grid.Column="0"
+                                   Source="{Binding PosterFullPath}"
+                                   Aspect="AspectFill"
+                                   HeightRequest="200"
+                                   WidthRequest="140"
+                                   Margin="0,5"/>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Start">
+
+                                <Label Text="{Binding Title}" 
+                                       FontAttributes="Bold" 
+                                       FontSize="18" 
+                                       TextColor="White"/>
+
+                                <Label Text="{Binding Genre}" 
+                                       FontSize="14" 
+                                       TextColor="#9CA3AF"/>
+
+                                <Label Text="{Binding ReleaseDate, StringFormat='Release date: {0}'}" 
+                                       FontSize="13" 
+                                       TextColor="#D1D5DB"/>
+
+                                <Label Text="{Binding RecommendationScore, StringFormat='🔥 {0}% similarity'}"
+                                       IsVisible="{Binding RecommendationScore, TargetNullValue=false}"
+                                       FontAttributes="Bold"
+                                       FontSize="20"
+                                       TextColor="#FACC15"
+                                       Margin="0,5,0,0"/>
+
+                                <Label Text="Your rating:" FontSize="14" TextColor="#D1D5DB"/>
+
+                                <HorizontalStackLayout x:Name="StarsLayout" Spacing="5" BindingContext="{Binding .}">
+                                    <Image Source="star_outline.png" HeightRequest="28" WidthRequest="28">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnStarTapped" CommandParameter="1"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                    <Image Source="star_outline.png" HeightRequest="28" WidthRequest="28">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnStarTapped" CommandParameter="2"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                    <Image Source="star_outline.png" HeightRequest="28" WidthRequest="28">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnStarTapped" CommandParameter="3"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                    <Image Source="star_outline.png" HeightRequest="28" WidthRequest="28">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnStarTapped" CommandParameter="4"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                    <Image Source="star_outline.png" HeightRequest="28" WidthRequest="28">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnStarTapped" CommandParameter="5"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                    <Image Source="star_outline.png" HeightRequest="28" WidthRequest="28">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnStarTapped" CommandParameter="6"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                    <Image Source="star_outline.png" HeightRequest="28" WidthRequest="28">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnStarTapped" CommandParameter="7"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                    <Image Source="star_outline.png" HeightRequest="28" WidthRequest="28">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnStarTapped" CommandParameter="8"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                    <Image Source="star_outline.png" HeightRequest="28" WidthRequest="28">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnStarTapped" CommandParameter="9"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                    <Image Source="star_outline.png" HeightRequest="28" WidthRequest="28">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnStarTapped" CommandParameter="10"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                </HorizontalStackLayout>
+
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="2" Spacing="8">
+
+                                <Grid ColumnSpacing="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="3*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="1" Text="Movie Profile" FontAttributes="Bold" TextColor="White"/>
+                                    <Label Grid.Column="2" Text="User Profile" FontAttributes="Bold" TextColor="White"/>
+                                </Grid>
+
+                                <Grid ColumnSpacing="6" RowSpacing="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="3*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Label Grid.Row="0" Grid.Column="0" Text="Anger" TextColor="White"/>
+                                    <Frame Grid.Row="0" Grid.Column="1" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#34D399" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding MovieEmotionValues[0], Converter={StaticResource PercentToWidthConverter}}"/>
+                                    <Frame Grid.Row="0" Grid.Column="2" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#F472B6" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding UserEmotionValues[0], Converter={StaticResource PercentToWidthConverter}}"/>
+
+                                    <Label Grid.Row="1" Grid.Column="0" Text="Fear" TextColor="White"/>
+                                    <Frame Grid.Row="1" Grid.Column="1" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#34D399" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding MovieEmotionValues[1], Converter={StaticResource PercentToWidthConverter}}"/>
+                                    <Frame Grid.Row="1" Grid.Column="2" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#F472B6" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding UserEmotionValues[1], Converter={StaticResource PercentToWidthConverter}}"/>
+
+                                    <Label Grid.Row="2" Grid.Column="0" Text="Joy" TextColor="White"/>
+                                    <Frame Grid.Row="2" Grid.Column="1" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#34D399" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding MovieEmotionValues[2], Converter={StaticResource PercentToWidthConverter}}"/>
+                                    <Frame Grid.Row="2" Grid.Column="2" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#F472B6" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding UserEmotionValues[2], Converter={StaticResource PercentToWidthConverter}}"/>
+
+                                    <Label Grid.Row="3" Grid.Column="0" Text="Sadness" TextColor="White"/>
+                                    <Frame Grid.Row="3" Grid.Column="1" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#34D399" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding MovieEmotionValues[3], Converter={StaticResource PercentToWidthConverter}}"/>
+                                    <Frame Grid.Row="3" Grid.Column="2" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#F472B6" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding UserEmotionValues[3], Converter={StaticResource PercentToWidthConverter}}"/>
+
+                                    <Label Grid.Row="4" Grid.Column="0" Text="Love" TextColor="White"/>
+                                    <Frame Grid.Row="4" Grid.Column="1" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#34D399" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding MovieEmotionValues[4], Converter={StaticResource PercentToWidthConverter}}"/>
+                                    <Frame Grid.Row="4" Grid.Column="2" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#F472B6" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding UserEmotionValues[4], Converter={StaticResource PercentToWidthConverter}}"/>
+
+                                    <Label Grid.Row="5" Grid.Column="0" Text="Surprise" TextColor="White"/>
+                                    <Frame Grid.Row="5" Grid.Column="1" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#34D399" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding MovieEmotionValues[5], Converter={StaticResource PercentToWidthConverter}}"/>
+                                    <Frame Grid.Row="5" Grid.Column="2" HeightRequest="20" Padding="0" CornerRadius="8"
+                                           BackgroundColor="#F472B6" HasShadow="False" HorizontalOptions="Start"
+                                           WidthRequest="{Binding UserEmotionValues[5], Converter={StaticResource PercentToWidthConverter}}"/>
+                                </Grid>
+                            </VerticalStackLayout>
+
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
