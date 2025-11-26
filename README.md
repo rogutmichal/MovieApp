@@ -1,10 +1,10 @@
-# 🎬 MovieApp – Rekomendacje filmowe oparte na emocjach
+#  MovieApp – Rekomendacje filmowe oparte na emocjach
 
 MovieApp to aplikacja w języku C# wykorzystująca **ML.NET** i SQLite do rekomendowania filmów użytkownikom na podstawie analizy emocji w recenzjach. System łączy dane o ocenach użytkowników, emocjonalne profile filmów oraz teksty recenzji, aby dostarczyć spersonalizowane rekomendacje.
 
 ---
 
-## 🔎 Funkcjonalności
+##  Funkcjonalności
 
 - Pobieranie danych o filmach i recenzjach z **The Movie Database API (TMDb)**.
 - Analiza emocji w recenzjach użytkowników przy użyciu wytrenowanego modelu ML.NET.
@@ -15,7 +15,7 @@ MovieApp to aplikacja w języku C# wykorzystująca **ML.NET** i SQLite do rekome
 
 ---
 
-## 📚 Model emocji
+##  Model emocji
 
 Model analizy emocji rozpoznaje sześć klas emocji w recenzjach:
 
@@ -32,7 +32,7 @@ Model (`emotion_model.zip`) **został wytrenowany w projekcie [emocje](https://g
 
 ---
 
-## 🗂️ Struktura bazy danych
+##  Struktura bazy danych
 
 Baza danych SQLite przechowuje:
 
@@ -43,7 +43,7 @@ Baza danych SQLite przechowuje:
 
 ---
 
-## ⚙️ Proces rekomendacji
+##  Proces rekomendacji
 
 1. Pobranie wszystkich filmów, recenzji i ocen użytkownika z bazy danych.
 2. Analiza recenzji i przypisanie wartości emocjonalnych do każdego filmu.
@@ -54,7 +54,7 @@ Baza danych SQLite przechowuje:
 
 ---
 
-## 🛠️ Technologie
+##  Technologie
 
 - **C# / .NET MAUI** – interfejs użytkownika i logika aplikacji.
 - **ML.NET** – analiza emocji w recenzjach.
@@ -64,7 +64,7 @@ Baza danych SQLite przechowuje:
 
 ---
 
-## 🚀 Uruchomienie
+##  Uruchomienie
 
 1. Skonfiguruj plik `appsettings.json` z kluczem API do TMDb:
 ```json
